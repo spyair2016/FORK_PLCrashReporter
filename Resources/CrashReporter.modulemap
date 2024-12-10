@@ -1,0 +1,8 @@
+framework module CrashReporter {
+  umbrella header "MTDCrashReporter.h"
+
+  export *
+  module * { export * }
+
+  link framework "Foundation"
+}
