@@ -3734,7 +3734,7 @@
 				DEFINES_MODULE = YES;
 				GENERATE_MASTER_OBJECT_FILE = YES;
 				INFOPLIST_FILE = Resources/Info.plist;
-				MACH_O_TYPE = mh_dylib;
+				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = Resources/CrashReporter.modulemap;
 				OTHER_CFLAGS = "-fembed-bitcode-marker";
 				"OTHER_CFLAGS[sdk=macosx*]" = "";
@@ -3758,7 +3758,7 @@
 				DEFINES_MODULE = YES;
 				GENERATE_MASTER_OBJECT_FILE = YES;
 				INFOPLIST_FILE = Resources/Info.plist;
-				MACH_O_TYPE = mh_dylib;
+				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = Resources/CrashReporter.modulemap;
 				OTHER_CFLAGS = "-fembed-bitcode-marker";
 				"OTHER_CFLAGS[sdk=iphoneos*]" = "-fembed-bitcode";
@@ -4300,6 +4300,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				EFFECTIVE_PLATFORM_NAME = "-iphoneuniversal";
+				MACH_O_TYPE = staticlib;
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -4308,6 +4309,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				EFFECTIVE_PLATFORM_NAME = "-iphoneuniversal";
+				MACH_O_TYPE = staticlib;
 				SDKROOT = iphoneos;
 			};
 			name = Release;

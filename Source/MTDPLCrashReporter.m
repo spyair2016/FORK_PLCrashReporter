@@ -375,7 +375,7 @@ static void uncaught_exception_handler (NSException *exception) {
 - (id) initWithBundle: (NSBundle *) bundle configuration: (MTDPLCrashReporterConfig *) configuration;
 - (id) initWithApplicationIdentifier: (NSString *) applicationIdentifier appVersion: (NSString *) applicationVersion appMarketingVersion: (NSString *) applicationMarketingVersion configuration: (MTDPLCrashReporterConfig *) configuration;
 
-#if PLCRASH_FEATURE_MACH_EXCEPTIONS
+#if MTDPLCRASH_FEATURE_MACH_EXCEPTIONS
 - (MTDPLCrashMachExceptionServer *) enableMachExceptionServerWithPreviousPortSet: (__strong MTDPLCrashMachExceptionPortSet **) previousPortSet
                                                                      callback: (MTDPLCrashMachExceptionHandlerCallback) callback
                                                                       context: (void *) context
@@ -403,7 +403,7 @@ static void uncaught_exception_handler (NSException *exception) {
     /** YES if the crash reporter has been enabled */
     BOOL _enabled;
     
-#if PLCRASH_FEATURE_MACH_EXCEPTIONS
+#if MTDPLCRASH_FEATURE_MACH_EXCEPTIONS
     /** The backing Mach exception server, if any. Nil if the reporter has not been enabled, or if
      * the configured signal handler type is not MTDPLCrashReporterSignalHandlerTypeMach. */
     __strong MTDPLCrashMachExceptionServer *_machServer;
@@ -426,13 +426,13 @@ static void uncaught_exception_handler (NSException *exception) {
 }
 
 + (void) initialize {
-    if (![[self class] isEqual: [MTDPLCrashReporter class]])
-        return;
-
-    /* Enable dyld image monitoring */
-    plcrash_nasync_image_list_init(&shared_image_list, mach_task_self());
-    _dyld_register_func_for_add_image(image_add_callback);
-    _dyld_register_func_for_remove_image(image_remove_callback);
+//    if (![[self class] isEqual: [MTDPLCrashReporter class]])
+//        return;
+//
+//    /* Enable dyld image monitoring */
+//    plcrash_nasync_image_list_init(&shared_image_list, mach_task_self());
+//    _dyld_register_func_for_add_image(image_add_callback);
+//    _dyld_register_func_for_remove_image(image_remove_callback);
 }
 
 
@@ -575,7 +575,7 @@ static MTDPLCrashReporter *sharedReporter = nil;
  * will return NO and a MTDPLCrashReporterErrorResourceBusy error, and the reporter will not be enabled.
  * This restriction may be removed in a future release.
  */
-- (BOOL) enableCrashReporterAndReturnError: (NSError **) outError {
+- (BOOL) enableCrashReporterAndReturnError: (NSError **) outError  {
     /* Prevent enabling more than one crash reporter, process wide. We can not support multiple chained reporters
      * due to the use of NSUncaughtExceptionHandler (it doesn't support chaining or assocation of context with the callbacks), as
      * well as our legacy approach of deregistering any signal handlers upon the first signal. Once MTDPLCrashUncaughtExceptionHandler is
@@ -622,7 +622,7 @@ static MTDPLCrashReporter *sharedReporter = nil;
             }
             break;
 
-#if PLCRASH_FEATURE_MACH_EXCEPTIONS
+#if MTDPLCRASH_FEATURE_MACH_EXCEPTIONS
         case MTDPLCrashReporterSignalHandlerTypeMach: {
             /* We still need to use signal handlers to catch SIGABRT in-process. The kernel sends an EXC_CRASH mach exception
              * to denote SIGABRT termination. In that case, catching the Mach exception in-process leads to process deadlock
@@ -978,7 +978,7 @@ cleanup:
     return [self initWithApplicationIdentifier: bundleIdentifier appVersion: bundleVersion appMarketingVersion:bundleMarketingVersion configuration: configuration];
 }
 
-#if PLCRASH_FEATURE_MACH_EXCEPTIONS
+#if MTDPLCRASH_FEATURE_MACH_EXCEPTIONS
 
 /**
  * Create, register, and return a Mach exception server.
@@ -1028,7 +1028,10 @@ cleanup:
     
     /* Create the server */
     NSError *osError;
-    MTDPLCrashMachExceptionServer *server = [[MTDPLCrashMachExceptionServer alloc] initWithCallBack: callback context: context error: &osError];
+    MTDPLCrashMachExceptionServer *server = [[MTDPLCrashMachExceptionServer alloc] initWithCallBack: callback
+                                                                                            context: context
+                                                                                              error: &osError
+                                                                                exceptionReportFunc: self.exceptionReportThreadFunc];
     if (server == nil) {
         plcrash_populate_error(outError, MTDPLCrashReporterErrorOperatingSystem, @"Failed to instantiate the Mach exception server.", osError);
         return nil;

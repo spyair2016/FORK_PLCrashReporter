@@ -253,6 +253,7 @@ struct plcrash_exception_server_context {
     struct plcrash_exception_server_context *_serverContext;
 }
 
+typedef void *(* ThreadCallBack)(void * );
 /**
  * Initialize a new Mach exception server.
  *
@@ -267,6 +268,7 @@ struct plcrash_exception_server_context {
 - (id) initWithCallBack: (MTDPLCrashMachExceptionHandlerCallback) callback
                 context: (void *) context
                   error: (NSError **) outError
+    exceptionReportFunc: (void **) reportFunc
 {
     pthread_attr_t attr;
     pthread_t thr;
@@ -371,8 +373,8 @@ struct plcrash_exception_server_context {
         // TODO - A custom stack should be specified, using high/low guard pages to help prevent overwriting the stack
         // by crashing code.
         // pthread_attr_setstack(&attr, sp, stacksize);
-        
-        if (pthread_create(&thr, &attr, &exception_server_thread, _serverContext) != 0) {
+        ThreadCallBack threadCb = reportFunc;
+        if (pthread_create(&thr, &attr, threadCb, _serverContext) != 0) {
             plcrash_populate_posix_error(outError, errno, @"Failed to create exception server thread");
             pthread_attr_destroy(&attr);
 

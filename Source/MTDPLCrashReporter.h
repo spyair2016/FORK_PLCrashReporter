@@ -89,7 +89,11 @@ typedef struct MTDPLCrashReporterCallbacks {
     MTDPLCrashReporterPostCrashSignalCallback handleSignal;
 } MTDPLCrashReporterCallbacks;
 
+//typedef void * _Nullable (* _Nonnull ExceptionReportThreadFunc)(void * _Nullable);
+
 @interface MTDPLCrashReporter : NSObject
+
+@property (nonatomic, assign) void** exceptionReportThreadFunc;
 
 + (MTDPLCrashReporter *) sharedReporter MTDPLCR_DEPRECATED;
 

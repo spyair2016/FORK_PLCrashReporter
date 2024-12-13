@@ -82,12 +82,12 @@ static void save_crash_report (MTDPLCrashReporter *reporter) {
     }
     [reporter purgePendingCrashReport];
 
-    PLCrashReport *report = [[PLCrashReport alloc] initWithData: data error: &error];
+    MTDPLCrashReport *report = [[MTDPLCrashReport alloc] initWithData: data error: &error];
     if (report == nil) {
        NSLog(@"Failed to parse crash report: %@", error);
        return;
    }
-    NSString *text = [PLCrashReportTextFormatter stringValueForCrashReport: report withTextFormat: PLCrashReportTextFormatiOS];
+    NSString *text = [MTDPLCrashReportTextFormatter stringValueForCrashReport: report withTextFormat: MTDPLCrashReportTextFormatiOS];
     NSLog(@"%@", text);
 
     NSString *outputPath = [documentsDirectory stringByAppendingPathComponent: @"demo.plcrash"];
@@ -154,14 +154,14 @@ int main (int argc, char *argv[]) {
 #endif /* TARGET_IPHONE_OS */
 
         /* Configure our reporter */
-        PLCrashReporterSignalHandlerType signalHandlerType =
+        MTDPLCrashReporterSignalHandlerType signalHandlerType =
 #if !TARGET_OS_TV
-            PLCrashReporterSignalHandlerTypeMach;
+            MTDPLCrashReporterSignalHandlerTypeMach;
 #else
-            PLCrashReporterSignalHandlerTypeBSD;
+            MTDPLCrashReporterSignalHandlerTypeBSD;
 #endif
-        PLCrashReporterConfig *config = [[PLCrashReporterConfig alloc] initWithSignalHandlerType: signalHandlerType
-                                                                            symbolicationStrategy: PLCrashReporterSymbolicationStrategyAll];
+        MTDPLCrashReporterConfig *config = [[MTDPLCrashReporterConfig alloc] initWithSignalHandlerType: signalHandlerType
+                                                                                 symbolicationStrategy: MTDPLCrashReporterSymbolicationStrategyAll];
         MTDPLCrashReporter *reporter = [[MTDPLCrashReporter alloc] initWithConfiguration: config];
 
         /* Save any existing crash report. */
@@ -173,7 +173,7 @@ int main (int argc, char *argv[]) {
         }
 
         /* Set up post-crash callbacks */
-        PLCrashReporterCallbacks cb = {
+        MTDPLCrashReporterCallbacks cb = {
             .version = 0,
             .context = (void *) 0xABABABAB,
             .handleSignal = post_crash_callback

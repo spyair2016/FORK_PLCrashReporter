@@ -31,6 +31,7 @@
 
 #import "MTDPLCrashFeatureConfig.h"
 #import "MTDPLCrashMachExceptionPort.h"
+#import "MTDPLCrashReporter.h"
 #include <AvailabilityMacros.h>
 
 #if MTDPLCRASH_FEATURE_MACH_EXCEPTIONS
@@ -90,7 +91,8 @@ kern_return_t MTDPLCrashMachExceptionForward (task_t task,
 
 - (id) initWithCallBack: (MTDPLCrashMachExceptionHandlerCallback) callback
                 context: (void *) context
-                  error: (NSError **) outError;
+                  error: (NSError **) outError
+    exceptionReportFunc: (void **) func;
 
 - (mach_port_t) copySendRightForServerAndReturningError: (NSError **) outError;
 
